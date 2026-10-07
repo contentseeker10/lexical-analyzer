@@ -1,5 +1,7 @@
 #include "analyzer.hpp"
 
+#include <string>
+
 std::ostream& operator<<(std::ostream& os, const Token& val) {
     std::string_view type;
     switch (val.token) {
@@ -25,6 +27,31 @@ Analyzer::Analyzer(const std::string_view& source) noexcept : src(source) {
     std::cout << "Analyzer initialized with source:\n" << source << std::endl;
 }
 
-// Token Analyzer::next_token() noexcept {
+Token Analyzer::next_token() noexcept {
+    skip_whitespace();
+    if (it >= src.size()) return { TokenType::End, "" };
 
-// }
+    size_t begin = it;
+    int c = advance();
+
+    switch (c) {
+        case '+': case '-': case '*': case '/': case '%': case '(': case ')':
+            return { TokenType::Operator, src.substr(begin, 1) };
+    }
+    
+    if (std::isdigit(c)) {
+        while (std::isdigit(peek())) advance();
+        if (peek() == '.') {
+            advance();
+            while (std::isdigit(peek())) advance();
+        }
+        return { TokenType::Number, src.substr(begin, it - begin) };
+    }
+
+    if (isalpha(c)) {
+        while (isalpha(peek()) || std::isdigit(peek())) advance();
+        return { TokenType::Identifier, src.substr(begin, it - begin) };
+    }
+
+    return { TokenType::Undefined, src.substr(begin, it - begin) };
+}

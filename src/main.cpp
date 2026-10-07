@@ -14,5 +14,7 @@ int main() {
 
     std::cout << "Stepanov Lexical Analyzer launched" << std::endl;
 
+    Analyzer l("   степанов");
+
     return 0;
 }

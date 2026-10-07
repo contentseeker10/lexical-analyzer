@@ -20,12 +20,17 @@ public:
     explicit Analyzer(const std::string_view&) noexcept;
 
     Token next_token() noexcept;
-private:
+// private:
     std::string_view src;
     size_t it {};
 
-    char peek()    const noexcept { return it < src.size() ? src[it]   : '\0'; };
-    char advance()       noexcept { return it < src.size() ? src[++it] : '\0'; };
+    int peek()    const noexcept { return it < src.size() ? src[it]   : '\0'; };
+    int advance()       noexcept { return it < src.size() ? src[it++] : '\0'; };
+
+    bool isalpha(int c) const noexcept {
+        c = std::tolower(c); 
+        return c == 'с' || c == 'т' || c == 'е' || c == 'п' || c == 'а' || c == 'н' || c == 'о' || c == 'в'; 
+    }
 
     void skip_whitespace() noexcept {
         while (std::isspace(peek())) advance();
