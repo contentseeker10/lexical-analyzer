@@ -2,7 +2,7 @@
 
 #include <string_view>
 #include <iostream>
-#include <cctype>
+#include <cwctype>
 
 enum class TokenType {
     Identifier, Number, Operator, Function, Keyword, Undefined, End
@@ -20,19 +20,26 @@ public:
     explicit Analyzer(const std::string_view&) noexcept;
 
     Token next_token() noexcept;
-// private:
+private:
     std::string_view src;
     size_t it {};
 
-    int peek()    const noexcept { return it < src.size() ? src[it]   : '\0'; };
-    int advance()       noexcept { return it < src.size() ? src[it++] : '\0'; };
+    wchar_t peek()    const noexcept { return it < src.size() ? src[it]   : '\0'; };
+    wchar_t advance()       noexcept { return it < src.size() ? src[it++] : '\0'; };
 
-    bool isalpha(int c) const noexcept {
-        c = std::tolower(c); 
-        return c == 'с' || c == 'т' || c == 'е' || c == 'п' || c == 'а' || c == 'н' || c == 'о' || c == 'в'; 
+    bool isalpha(wchar_t c) const noexcept {
+        c = std::towlower(c); 
+        return c == 'с' || c == 'т' || c == 'е' || c == 'п' 
+            || c == 'а' || c == 'н' || c == 'о' || c == 'в'; 
+    }
+
+    bool is_delimiter(wchar_t c) noexcept {
+        return std::iswspace(c) 
+            || c == '+' || c == '-' || c == '*' || c == '/' 
+            || c == '%' || c == '(' || c == ')' || c == '\0'; 
     }
 
     void skip_whitespace() noexcept {
-        while (std::isspace(peek())) advance();
+        while (std::iswspace(peek())) advance();
     };  
 };

@@ -12,9 +12,13 @@ int main() {
         SetConsoleOutputCP(CP_UTF8);
     #endif
 
+    std::setlocale(LC_ALL, "ua_UA.UTF-8");
+
     std::cout << "Stepanov Lexical Analyzer launched" << std::endl;
 
     Analyzer l("   степанов");
+
+    std::cout << l.next_token() << std::endl; 
 
     return 0;
 }

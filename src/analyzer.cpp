@@ -32,7 +32,7 @@ Token Analyzer::next_token() noexcept {
     if (it >= src.size()) return { TokenType::End, "" };
 
     size_t begin = it;
-    int c = advance();
+    wchar_t c = advance();
 
     switch (c) {
         case '+': case '-': case '*': case '/': case '%': case '(': case ')':
@@ -52,6 +52,8 @@ Token Analyzer::next_token() noexcept {
         while (isalpha(peek()) || std::isdigit(peek())) advance();
         return { TokenType::Identifier, src.substr(begin, it - begin) };
     }
+
+    while (!is_delimiter(peek())) advance();
 
     return { TokenType::Undefined, src.substr(begin, it - begin) };
 }
