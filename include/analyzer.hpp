@@ -1,3 +1,5 @@
+#pragma once
+
 #include <string_view>
 #include <iostream>
 #include <cctype>
@@ -11,9 +13,11 @@ struct Token final {
     std::string_view str;
 };
 
+std::ostream& operator<<(std::ostream&, const Token&);
+
 class Analyzer final {
 public:
-    explicit Analyzer(const std::string_view& source) noexcept;
+    explicit Analyzer(const std::string_view&) noexcept;
 
     Token next_token() noexcept;
 private:

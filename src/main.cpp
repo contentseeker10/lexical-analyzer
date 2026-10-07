@@ -1,5 +1,18 @@
-#include <iostream>
+#include "analyzer.hpp"
+
+#include <sstream>
+
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 int main() {
-    std::cout << "Lexical Analyzer launched" << std::endl;
+    #ifdef _WIN32
+        SetConsoleCP(CP_UTF8);
+        SetConsoleOutputCP(CP_UTF8);
+    #endif
+
+    std::cout << "Stepanov Lexical Analyzer launched" << std::endl;
+
+    return 0;
 }
