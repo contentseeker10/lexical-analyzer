@@ -7,3 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_executable(LexicalAnalyzer src/main.cpp)
+
+target_include_directories(LexicalAnalyzer PRIVATE include)
+
+target_sources(LexicalAnalyzer PRIVATE src/analyzer.cpp)
