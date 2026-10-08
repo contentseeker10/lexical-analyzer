@@ -16,9 +16,9 @@ int main() {
 
     std::cout << "Stepanov Lexical Analyzer launched" << std::endl;
 
-    Analyzer l("   степанов");
+    Analyzer l("*");
 
-    std::cout << l.next_token() << std::endl; 
+    std::cout << l.next_token() << std::endl;
 
     return 0;
 }

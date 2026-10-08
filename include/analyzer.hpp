@@ -2,7 +2,6 @@
 
 #include <string_view>
 #include <iostream>
-#include <cwctype>
 
 enum class TokenType {
     Identifier, Number, Operator, Function, Keyword, Undefined, End
@@ -21,25 +20,31 @@ public:
 
     Token next_token() noexcept;
 private:
-    std::string_view src;
-    size_t it {};
+    std::string_view _src;
 
-    wchar_t peek()    const noexcept { return it < src.size() ? src[it]   : '\0'; };
-    wchar_t advance()       noexcept { return it < src.size() ? src[it++] : '\0'; };
+    size_t _begin {};
+    size_t _curr {};
 
-    bool isalpha(wchar_t c) const noexcept {
-        c = std::towlower(c); 
-        return c == 'с' || c == 'т' || c == 'е' || c == 'п' 
-            || c == 'а' || c == 'н' || c == 'о' || c == 'в'; 
+    using char_utf = uint16_t;
+
+    bool is_at_end() const noexcept {
+        return _curr >= _src.length();
     }
 
-    bool is_delimiter(wchar_t c) noexcept {
-        return std::iswspace(c) 
-            || c == '+' || c == '-' || c == '*' || c == '/' 
-            || c == '%' || c == '(' || c == ')' || c == '\0'; 
+    char_utf advance() noexcept {
+        return _src.at(_curr++);
     }
 
-    void skip_whitespace() noexcept {
-        while (std::iswspace(peek())) advance();
-    };  
+    bool match(char_utf expected) noexcept {
+        if (is_at_end()) return false;
+        if (_src.at(_curr) != expected) return false;
+        _curr++;
+        return true;
+    }
+
+    bool isalpha(char_utf c) const noexcept;
+
+    bool isdelim(char_utf c) const noexcept;
+
+    void skip_whitespace() noexcept;
 };
