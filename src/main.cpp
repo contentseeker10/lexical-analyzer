@@ -10,7 +10,7 @@ int main() {
 
     cout << "Stepanov Lexical Analyzer launched" << endl;
 
-    vs::Analyzer l(L"степ=2228.25*4");
+    vs::Analyzer l(L"степ=2228.25*415+");
 
     cout << l.next_token() << endl;
     cout << l.next_token() << endl;

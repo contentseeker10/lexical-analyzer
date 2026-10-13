@@ -63,14 +63,18 @@ namespace vs {
 
         // Numbers
         if (std::iswdigit(c)) {
-            while (!is_at_end() && std::iswdigit(advance()));
+            while (!is_at_end() && std::iswdigit(peek())) advance();
             if (match(L'.')) {
                 advance();
-                if (std::iswdigit(advance())) {
-                    while (!is_at_end() && std::iswdigit(advance()));
+                if (std::iswdigit(peek())) {
+                    while (!is_at_end() && std::iswdigit(peek())) advance();
+                } else {
+                    std::string str = wide_to_utf8(_src.substr(_begin, _curr - _begin));
+                    reset_ptr();
+                    return { TokenType::Undefined, str };
                 }
             }
-            std::string str = wide_to_utf8(_src.substr(_begin, _curr));
+            std::string str = wide_to_utf8(_src.substr(_begin, _curr - _begin));
             reset_ptr();
             return { TokenType::Number, str };
         }
@@ -78,7 +82,7 @@ namespace vs {
         // Identifiers
         if (is_id(c)) {
             while (!is_at_end() && (is_id(peek()) || std::iswdigit(peek()))) advance();
-            std::string str = wide_to_utf8(_src.substr(_begin, _curr));
+            std::string str = wide_to_utf8(_src.substr(_begin, _curr - _begin));
             reset_ptr();
             return { TokenType::Identifier, str };
         }
