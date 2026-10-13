@@ -1,6 +1,8 @@
 # Created by https://www.toptal.com/developers/gitignore/api/c++,visualstudio,visualstudiocode,cmake
 # Edit at https://www.toptal.com/developers/gitignore?templates=c++,visualstudio,visualstudiocode,cmake
 
+*.pdf
+
 ### C++ ###
 # Prerequisites
 *.d
@@ -31,7 +33,7 @@
 *.lib
 
 # Executables
-*.exe
+# *.exe
 *.out
 *.app
 
@@ -105,7 +107,7 @@ x86/
 [Aa][Rr][Mm]/
 [Aa][Rr][Mm]64/
 bld/
-[Bb]in/
+# [Bb]in/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
