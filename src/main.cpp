@@ -92,7 +92,7 @@ int main(int argc, char* argv[]) {
     vs::Token t;
     while (t.token != vs::TokenType::End) {
         t = l.next_token();
-        cout << t << endl;
+        cout << "Next token ->\t" << t << endl;
     }
 
     cout << endl;
