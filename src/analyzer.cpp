@@ -80,20 +80,12 @@ namespace vs {
 
         // Operator token
         if (_is_op(c)) {
-            return _consume_op(c);
-        }
-
-        // String literal token
-        if (_match(L'\"')) {
-            TokenType type = TokenType::StringLiteral;
-            _advance();
-            while (!_is_at_end() || _match(L'\"')) _advance();
-            if (_peek() != L'\"') type = TokenType::Undefined;
-            return { type, _get_curr_str() };
+            if (!std::iswdigit(_src[_curr+1])) return _consume_op(c);
         }
 
         // Number token
-        if (std::iswdigit(c)) {
+        if (std::iswdigit(c) || (_is_op(c) && std::iswdigit(_src[_curr+1]))) {
+            if (_is_op(c) && std::iswdigit(_src[_curr+1])) _advance();
             TokenType type = TokenType::Number;
             while (!_is_at_end() && std::iswdigit(_peek())) _advance();
             if (_match(L'.')) {
@@ -106,6 +98,16 @@ namespace vs {
                 type = TokenType::Undefined;
                 _skip_rest();
             }
+            return { type, _get_curr_str() };
+        }
+
+        // String literal token
+        if (_match(L'"')) {
+            TokenType type = TokenType::StringLiteral;
+            _advance();
+            while (!_match(L'"')) _advance();
+            if (_peek() != L'"') type = TokenType::Undefined;
+            else _advance();
             return { type, _get_curr_str() };
         }
 

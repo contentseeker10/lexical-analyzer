@@ -37,15 +37,24 @@ int main(int argc, char* argv[]) {
     SetConsoleCP(CP_UTF8);
     SetConsoleOutputCP(CP_UTF8);
 
-    cout << "Stepanov Lexical Analyzer launched" << endl;
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
+    GetConsoleScreenBufferInfo(hConsole, &csbiInfo);
+    WORD wOldColorAttrs = csbiInfo.wAttributes;
 
+    SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+    cout << "Stepanov Lexical Analyzer launched" << endl;
+    cout << endl;
+
+    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_INTENSITY);
     if (argc < 2) {
         cout << "Usage: LexicalAnalyzer <filename>" << endl;
         return 1;
     }
 
     using fs = std::filesystem::path;
-    fs path = fs(".\\example") / std::string_view(argv[1]);
+    fs path = fs(".") / std::string_view(argv[1]);
+    // fs path = fs(".") / std::string_view("pseudocode.txt");
 
     std::ifstream file(path, std::ios::binary | std::ios::ate);
     if (!file.is_open()) {
@@ -68,16 +77,24 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
     cout << "Source file successfully read" << endl;
-    cout << src << std::endl;
-
+    cout << endl;
+    SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+    cout << src << endl;
+    cout << endl;
+    
+    SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
     vs::Analyzer l(utf8_to_wide(src));
-
+    cout << endl;
+    
+    SetConsoleTextAttribute(hConsole, wOldColorAttrs);
     vs::Token t;
     while (t.token != vs::TokenType::End) {
         t = l.next_token();
         cout << t << endl;
     }
 
+    cout << endl;
     return 0;
 }
