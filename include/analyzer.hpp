@@ -33,44 +33,58 @@ namespace vs {
         std::map<std::string, bool> _keywords;
         std::map<std::string, bool> _std_functions;
 
-        void insert_keywords()     noexcept;
-        void insert_std_function() noexcept;
+        void _insert_keywords()     noexcept;
+        void _insert_std_function() noexcept;
 
-        bool is_at_end()  const noexcept { return _curr >= _src.length(); }
+        bool _is_at_end()  const noexcept { return _curr >= _src.length(); }
 
-        wchar_t peek()    const noexcept { return _src[_curr]; }
-        wchar_t advance()       noexcept { return _src[_curr++]; }
+        wchar_t _peek()    const noexcept { return _src[_curr]; }
+        wchar_t _advance()       noexcept { return _src[_curr++]; }
 
-        void reset_ptr() noexcept { _begin = _curr; }
+        void _reset_ptr() noexcept { _begin = _curr; }
 
-        bool match(wchar_t expected) const noexcept {
-            if (is_at_end()) return false;
-            if (peek() != expected) return false;
+        bool _match(wchar_t expected) const noexcept {
+            if (_is_at_end()) return false;
+            if (_peek() != expected) return false;
             return true;
         }
 
-        bool is_id(wchar_t c) const noexcept {
-            return match(L'с') || match(L'т') || match(L'е') || match(L'п') || match(L'а') || match(L'н') || match(L'о') || match(L'в') 
-                || match(L'С') || match(L'Т') || match(L'Е') || match(L'П') || match(L'А') || match(L'Н') || match(L'О') || match(L'В');
+        bool _is_invalid_id(wchar_t c) const noexcept {
+            return !_is_id(c) && !std::iswdigit(c) && !_is_op(c) && !_is_at_end() && !std::iswspace(c);
         }
 
-        void skip_whitespace() noexcept { 
-            while (std::iswspace(peek())) advance();
-            reset_ptr();
+        bool _is_op(wchar_t c) const noexcept {
+            return _match(L'+') || _match(L'-') || _match(L'*') || _match(L'/') || _match(L'%') || _match(L'=');
         }
 
-        Token consume_op(wchar_t c) noexcept {
-            advance();
-            reset_ptr();
+        bool _is_id(wchar_t c) const noexcept {
+            return _match(L'с') || _match(L'т') || _match(L'е') || _match(L'п') 
+                || _match(L'а') || _match(L'н') || _match(L'о') || _match(L'в') 
+                || _match(L'С') || _match(L'Т') || _match(L'Е') || _match(L'П') 
+                || _match(L'А') || _match(L'Н') || _match(L'О') || _match(L'В');
+        }
+
+        void _skip_rest() noexcept {
+            while (!_is_at_end() && !std::iswspace(_peek())) _advance();
+        }
+
+        void _skip_whitespace() noexcept { 
+            while (std::iswspace(_peek())) _advance();
+            _reset_ptr();
+        }
+
+        Token _consume_op(wchar_t c) noexcept {
+            _advance();
+            _reset_ptr();
             std::wstring wstr = L"";
             wstr.push_back(c);
             std::string str = wide_to_utf8(wstr);
             return { TokenType::Operator, str };
         }
 
-        std::string get_curr_str() noexcept {
+        std::string _get_curr_str() noexcept {
             std::string str = wide_to_utf8(_src.substr(_begin, _curr - _begin));
-            reset_ptr();
+            _reset_ptr();
             return str;
         }
     };

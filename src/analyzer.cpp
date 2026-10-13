@@ -46,12 +46,12 @@ namespace vs {
     }
 
     Analyzer::Analyzer(const std::wstring& source) noexcept : _src(source) {
-        insert_keywords();
-        insert_std_function();
+        _insert_keywords();
+        _insert_std_function();
         std::cout << "Analyzer initialized" << std::endl;
     }
 
-    void Analyzer::insert_keywords() noexcept {
+    void Analyzer::_insert_keywords() noexcept {
         _keywords.insert({"if", true});
         _keywords.insert({"else", true});
         _keywords.insert({"while", true});
@@ -60,7 +60,7 @@ namespace vs {
         _keywords.insert({"const", true});
     }
 
-    void Analyzer::insert_std_function() noexcept {
+    void Analyzer::_insert_std_function() noexcept {
         _std_functions.insert({"sin", true});
         _std_functions.insert({"cos", true});
         _std_functions.insert({"tan", true});
@@ -70,58 +70,58 @@ namespace vs {
     }
 
     Token Analyzer::next_token() noexcept {
-        skip_whitespace();
-        wchar_t c = peek();
+        _skip_whitespace();
+        wchar_t c = _peek();
 
         // End token
-        if (is_at_end()) {
+        if (_is_at_end()) {
             return { TokenType::End, "" };
         }
 
         // Operator token
-        switch (c) {
-            case L'+': return consume_op(c); break;
-            case L'-': return consume_op(c); break;
-            case L'*': return consume_op(c); break;
-            case L'/': return consume_op(c); break;
-            case L'%': return consume_op(c); break;
-            case L'=': return consume_op(c); break;
-            default: break;
+        if (_is_op(c)) {
+            return _consume_op(c);
         }
 
         // String literal token
-        if (match(L'\"')) {
-            advance();
-            while (!is_at_end()) {
-                if (match(L'\"')) {
-                    advance();
-                    break;
-                }
-                advance();
-            }
-            return { TokenType::StringLiteral, get_curr_str() };
+        if (_match(L'\"')) {
+            TokenType type = TokenType::StringLiteral;
+            _advance();
+            while (!_is_at_end() || _match(L'\"')) _advance();
+            if (_peek() != L'\"') type = TokenType::Undefined;
+            return { type, _get_curr_str() };
         }
 
         // Number token
         if (std::iswdigit(c)) {
-            while (!is_at_end() && std::iswdigit(peek())) advance();
-            if (match(L'.')) {
-                advance();
-                if (!is_at_end() && std::iswdigit(peek())) {
-                    while (!is_at_end() && std::iswdigit(peek())) advance();
-                } else return { TokenType::Undefined, get_curr_str() };
+            TokenType type = TokenType::Number;
+            while (!_is_at_end() && std::iswdigit(_peek())) _advance();
+            if (_match(L'.')) {
+                _advance();
+                if (!_is_at_end() && std::iswdigit(_peek())) {
+                    while (!_is_at_end() && std::iswdigit(_peek())) _advance();
+                } else type = TokenType::Undefined;
             }
-            return { TokenType::Number, get_curr_str() };
+            if (!std::iswspace(_peek()) && !_is_at_end() && !_is_op(_peek())) {
+                type = TokenType::Undefined;
+                _skip_rest();
+            }
+            return { type, _get_curr_str() };
         }
 
         // Identifier token
-        if (is_id(c)) {
-            while (!is_at_end() && (is_id(peek()) || std::iswdigit(peek()))) advance();
-            return { TokenType::Identifier, get_curr_str() };
+        if (_is_id(c)) {
+            TokenType type = TokenType::Identifier;
+            while (!_is_at_end() && (_is_id(_peek()) || std::iswdigit(_peek()))) _advance();
+            if (_is_invalid_id(_peek())) {
+                type = TokenType::Undefined;
+                _skip_rest();
+            }
+            return { type, _get_curr_str() };
         }
 
-        while (!is_at_end() && !std::iswspace(peek())) advance();
-        std::string str = get_curr_str();
+        _skip_rest();
+        std::string str = _get_curr_str();
 
         // Keyword token
         if (_keywords.contains(str)) return { TokenType::Keyword, str };
@@ -130,7 +130,7 @@ namespace vs {
         if (_std_functions.contains(str)) return { TokenType::Function, str };
 
         // Undefined token
-        return { TokenType::Undefined, get_curr_str() };
+        return { TokenType::Undefined, str };
     }
 
 }
