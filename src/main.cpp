@@ -10,7 +10,7 @@ int main() {
 
     cout << "Stepanov Lexical Analyzer launched" << endl;
 
-    vs::Analyzer l(L"степ123 = sin 2 if pow do пнв + 14 / 2");
+    vs::Analyzer l(L"степ123 = sin 2 if pow do пнв + 14 / 2 степіанов = \"Вовчик\"");
 
     vs::Token t;
     while (t.token != vs::TokenType::End) {

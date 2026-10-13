@@ -13,14 +13,16 @@ namespace vs {
                 type = "Undefined"; break;
             case TokenType::Identifier:
                 type = "Identifier"; break;
+            case TokenType::StringLiteral:
+                type = "String literal"; break;
             case TokenType::Number:
                 type = "Number"; break;
             case TokenType::Operator:
                 type = "Operator"; break;
             case TokenType::Function:
-                type = "Function (embedded)"; break;
+                type = "Std function"; break;
             case TokenType::Keyword:
-                type = "Keyword (reserved word)"; break;
+                type = "Keyword"; break;
             default: break;
         }
         os << "<" << type << ", " << '"' << val.str << '"' << '>';
@@ -87,12 +89,25 @@ namespace vs {
             default: break;
         }
 
+        // String literal token
+        if (match(L'\"')) {
+            advance();
+            while (!is_at_end()) {
+                if (match(L'\"')) {
+                    advance();
+                    break;
+                }
+                advance();
+            }
+            return { TokenType::StringLiteral, get_curr_str() };
+        }
+
         // Number token
         if (std::iswdigit(c)) {
             while (!is_at_end() && std::iswdigit(peek())) advance();
             if (match(L'.')) {
                 advance();
-                if (std::iswdigit(peek())) {
+                if (!is_at_end() && std::iswdigit(peek())) {
                     while (!is_at_end() && std::iswdigit(peek())) advance();
                 } else return { TokenType::Undefined, get_curr_str() };
             }

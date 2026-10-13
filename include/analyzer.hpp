@@ -8,7 +8,7 @@
 namespace vs {
 
     enum class TokenType {
-        End = -1, Undefined, Identifier, Number, Operator, Function, Keyword
+        End = -1, Undefined, Identifier, StringLiteral, Number, Operator, Function, Keyword
     };
 
     struct Token final {
