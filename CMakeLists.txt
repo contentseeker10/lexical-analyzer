@@ -12,4 +12,4 @@ target_include_directories(LexicalAnalyzer PRIVATE include)
 
 target_sources(LexicalAnalyzer PRIVATE src/analyzer.cpp)
 
-add_compile_options(/utf-8)
+target_compile_options(LexicalAnalyzer PRIVATE /utf-8)

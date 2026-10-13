@@ -16,7 +16,7 @@ namespace vs {
     };
 
     std::ostream& operator<<(std::ostream&, const Token&);
-    std::string wide_to_utf8(const std::wstring_view&);
+    std::string wide_to_utf8(const std::wstring&);
 
     class Analyzer final {
     public:
@@ -29,10 +29,12 @@ namespace vs {
         size_t _begin {};
         size_t _curr {};
 
-        bool is_at_end() const noexcept { return _curr >= _src.length(); }
+        bool is_at_end()  const noexcept { return _curr >= _src.length(); }
 
-        wchar_t peek() const noexcept { return _src[_curr]; }
-        wchar_t advance() noexcept { return _src[_curr++]; }
+        wchar_t peek()    const noexcept { return _src[_curr]; }
+        wchar_t advance()       noexcept { return _src[_curr++]; }
+
+        void reset_ptr() noexcept { _begin = _curr; }
 
         bool match(wchar_t expected) const noexcept {
             if (is_at_end()) return false;
@@ -45,7 +47,19 @@ namespace vs {
                 || match(L'С') || match(L'Т') || match(L'Е') || match(L'П') || match(L'А') || match(L'Н') || match(L'О') || match(L'В');
         }
 
-        void skip_whitespace() noexcept { while (std::iswspace(peek())) advance(); }
+        void skip_whitespace() noexcept { 
+            while (std::iswspace(peek())) advance();
+            reset_ptr();
+        }
+
+        Token consume_op(wchar_t c) noexcept {
+            advance();
+            reset_ptr();
+            std::wstring wstr = L"";
+            wstr.push_back(c);
+            std::string str = wide_to_utf8(wstr);
+            return { TokenType::Operator, str };
+        }
     };
 
 }

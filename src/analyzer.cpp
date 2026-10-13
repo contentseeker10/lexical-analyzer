@@ -46,15 +46,18 @@ namespace vs {
     }
 
     Token Analyzer::next_token() noexcept {
-        wchar_t c = advance();
+        skip_whitespace();
+
+        wchar_t c = peek();
 
         // Operators
         switch (c) {
-            case L'+': return { TokenType::Operator, "+" }; break;
-            case L'-': return { TokenType::Operator, "-" }; break;
-            case L'*': return { TokenType::Operator, "*" }; break;
-            case L'/': return { TokenType::Operator, "/" }; break;
-            case L'%': return { TokenType::Operator, "%" }; break;
+            case L'+': return consume_op(c); break;
+            case L'-': return consume_op(c); break;
+            case L'*': return consume_op(c); break;
+            case L'/': return consume_op(c); break;
+            case L'%': return consume_op(c); break;
+            case L'=': return consume_op(c); break;
             default: break;
         }
 
@@ -67,14 +70,17 @@ namespace vs {
                     while (!is_at_end() && std::iswdigit(advance()));
                 }
             }
-            return { TokenType::Number, wide_to_utf8(_src.substr(_begin, _curr - 1)) };
+            std::string str = wide_to_utf8(_src.substr(_begin, _curr));
+            reset_ptr();
+            return { TokenType::Number, str };
         }
 
         // Identifiers
-        // TODO: is_id() works wrong in cyrillic - why???
         if (is_id(c)) {
-            while (!is_at_end() && (isalpha(peek()) || std::iswdigit(peek()))) advance();
-            return { TokenType::Identifier, wide_to_utf8(_src.substr(_begin, _curr - 1)) };
+            while (!is_at_end() && (is_id(peek()) || std::iswdigit(peek()))) advance();
+            std::string str = wide_to_utf8(_src.substr(_begin, _curr));
+            reset_ptr();
+            return { TokenType::Identifier, str };
         }
 
         return { TokenType::Undefined, "" };

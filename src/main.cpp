@@ -13,6 +13,10 @@ int main() {
     vs::Analyzer l(L"степ=2228.25*4");
 
     cout << l.next_token() << endl;
+    cout << l.next_token() << endl;
+    cout << l.next_token() << endl;
+    cout << l.next_token() << endl;
+    cout << l.next_token() << endl;
 
     return 0;
 }
