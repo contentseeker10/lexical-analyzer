@@ -7,6 +7,10 @@ namespace vs {
     std::ostream& operator<<(std::ostream& os, const Token& val) {
         std::string_view type;
         switch (val.token) {
+            case TokenType::End:
+                type = "End"; break;
+            case TokenType::Undefined:
+                type = "Undefined"; break;
             case TokenType::Identifier:
                 type = "Identifier"; break;
             case TokenType::Number:
@@ -17,8 +21,6 @@ namespace vs {
                 type = "Function (embedded)"; break;
             case TokenType::Keyword:
                 type = "Keyword (reserved word)"; break;
-            case TokenType::Undefined:
-                type = "Undefined"; break;
             default: break;
         }
         os << "<" << type << ", " << '"' << val.str << '"' << '>';
@@ -50,6 +52,11 @@ namespace vs {
 
         wchar_t c = peek();
 
+        // End
+        if (is_at_end()) {
+            return { TokenType::End, "" };
+        }
+
         // Operators
         switch (c) {
             case L'+': return consume_op(c); break;
@@ -68,26 +75,20 @@ namespace vs {
                 advance();
                 if (std::iswdigit(peek())) {
                     while (!is_at_end() && std::iswdigit(peek())) advance();
-                } else {
-                    std::string str = wide_to_utf8(_src.substr(_begin, _curr - _begin));
-                    reset_ptr();
-                    return { TokenType::Undefined, str };
-                }
+                } else return { TokenType::Undefined, get_curr_str() };
             }
-            std::string str = wide_to_utf8(_src.substr(_begin, _curr - _begin));
-            reset_ptr();
-            return { TokenType::Number, str };
+            return { TokenType::Number, get_curr_str() };
         }
 
         // Identifiers
         if (is_id(c)) {
             while (!is_at_end() && (is_id(peek()) || std::iswdigit(peek()))) advance();
-            std::string str = wide_to_utf8(_src.substr(_begin, _curr - _begin));
-            reset_ptr();
-            return { TokenType::Identifier, str };
+            return { TokenType::Identifier, get_curr_str() };
         }
 
-        return { TokenType::Undefined, "" };
+        // Undefined
+        while (!is_at_end() && !std::iswspace(peek())) advance();
+        return { TokenType::Undefined, get_curr_str() };
     }
 
 }

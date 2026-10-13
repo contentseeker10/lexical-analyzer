@@ -7,7 +7,7 @@
 namespace vs {
 
     enum class TokenType {
-        Undefined, Identifier, Number, Operator, Function, Keyword, End
+        End = -1, Undefined, Identifier, Number, Operator, Function, Keyword
     };
 
     struct Token final {
@@ -59,6 +59,12 @@ namespace vs {
             wstr.push_back(c);
             std::string str = wide_to_utf8(wstr);
             return { TokenType::Operator, str };
+        }
+
+        std::string get_curr_str() noexcept {
+            std::string str = wide_to_utf8(_src.substr(_begin, _curr - _begin));
+            reset_ptr();
+            return str;
         }
     };
 
