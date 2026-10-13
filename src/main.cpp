@@ -1,24 +1,18 @@
 #include "analyzer.hpp"
 
-#include <sstream>
+#include <Windows.h>
 
-#ifdef _WIN32
-#include <windows.h>
-#endif
+using std::cout, std::endl;
 
 int main() {
-    #ifdef _WIN32
-        SetConsoleCP(CP_UTF8);
-        SetConsoleOutputCP(CP_UTF8);
-    #endif
+    SetConsoleCP(CP_UTF8);
+    SetConsoleOutputCP(CP_UTF8);
 
-    std::setlocale(LC_ALL, "ua_UA.UTF-8");
+    cout << "Stepanov Lexical Analyzer launched" << endl;
 
-    std::cout << "Stepanov Lexical Analyzer launched" << std::endl;
+    vs::Analyzer l(L"2228.25*4");
 
-    Analyzer l("*");
-
-    std::cout << l.next_token() << std::endl;
+    cout << l.next_token() << endl;
 
     return 0;
 }

@@ -11,3 +11,5 @@ add_executable(LexicalAnalyzer src/main.cpp)
 target_include_directories(LexicalAnalyzer PRIVATE include)
 
 target_sources(LexicalAnalyzer PRIVATE src/analyzer.cpp)
+
+add_compile_options(/utf-8)
