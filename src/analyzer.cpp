@@ -44,20 +44,39 @@ namespace vs {
     }
 
     Analyzer::Analyzer(const std::wstring& source) noexcept : _src(source) {
+        insert_keywords();
+        insert_std_function();
         std::cout << "Analyzer initialized" << std::endl;
+    }
+
+    void Analyzer::insert_keywords() noexcept {
+        _keywords.insert({"if", true});
+        _keywords.insert({"else", true});
+        _keywords.insert({"while", true});
+        _keywords.insert({"do", true});
+        _keywords.insert({"void", true});
+        _keywords.insert({"const", true});
+    }
+
+    void Analyzer::insert_std_function() noexcept {
+        _std_functions.insert({"sin", true});
+        _std_functions.insert({"cos", true});
+        _std_functions.insert({"tan", true});
+        _std_functions.insert({"cot", true});
+        _std_functions.insert({"pow", true});
+        _std_functions.insert({"sqrt", true});
     }
 
     Token Analyzer::next_token() noexcept {
         skip_whitespace();
-
         wchar_t c = peek();
 
-        // End
+        // End token
         if (is_at_end()) {
             return { TokenType::End, "" };
         }
 
-        // Operators
+        // Operator token
         switch (c) {
             case L'+': return consume_op(c); break;
             case L'-': return consume_op(c); break;
@@ -68,7 +87,7 @@ namespace vs {
             default: break;
         }
 
-        // Numbers
+        // Number token
         if (std::iswdigit(c)) {
             while (!is_at_end() && std::iswdigit(peek())) advance();
             if (match(L'.')) {
@@ -80,14 +99,22 @@ namespace vs {
             return { TokenType::Number, get_curr_str() };
         }
 
-        // Identifiers
+        // Identifier token
         if (is_id(c)) {
             while (!is_at_end() && (is_id(peek()) || std::iswdigit(peek()))) advance();
             return { TokenType::Identifier, get_curr_str() };
         }
 
-        // Undefined
         while (!is_at_end() && !std::iswspace(peek())) advance();
+        std::string str = get_curr_str();
+
+        // Keyword token
+        if (_keywords.contains(str)) return { TokenType::Keyword, str };
+        
+        // Std function token
+        if (_std_functions.contains(str)) return { TokenType::Function, str };
+
+        // Undefined token
         return { TokenType::Undefined, get_curr_str() };
     }
 

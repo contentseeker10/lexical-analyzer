@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include <cwctype>
+#include <map>
 
 namespace vs {
 
@@ -28,6 +29,12 @@ namespace vs {
 
         size_t _begin {};
         size_t _curr {};
+
+        std::map<std::string, bool> _keywords;
+        std::map<std::string, bool> _std_functions;
+
+        void insert_keywords()     noexcept;
+        void insert_std_function() noexcept;
 
         bool is_at_end()  const noexcept { return _curr >= _src.length(); }
 

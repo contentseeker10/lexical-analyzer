@@ -10,13 +10,13 @@ int main() {
 
     cout << "Stepanov Lexical Analyzer launched" << endl;
 
-    vs::Analyzer l(L"бебра");
+    vs::Analyzer l(L"степ123 = sin 2 if pow do пнв + 14 / 2");
 
-    cout << l.next_token() << endl;
-    cout << l.next_token() << endl;
-    // cout << l.next_token() << endl;
-    // cout << l.next_token() << endl;
-    // cout << l.next_token() << endl;
+    vs::Token t;
+    while (t.token != vs::TokenType::End) {
+        t = l.next_token();
+        cout << t << endl;
+    }
 
     return 0;
 }
