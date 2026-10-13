@@ -29,26 +29,23 @@ namespace vs {
         size_t _begin {};
         size_t _curr {};
 
-        bool is_at_end() const noexcept {
-            return _curr >= _src.length();
-        }
+        bool is_at_end() const noexcept { return _curr >= _src.length(); }
 
-        wchar_t advance() noexcept {
-            return _src[_curr++];
-        }
+        wchar_t peek() const noexcept { return _src[_curr]; }
+        wchar_t advance() noexcept { return _src[_curr++]; }
 
-        bool match(wchar_t expected) noexcept {
+        bool match(wchar_t expected) const noexcept {
             if (is_at_end()) return false;
-            if (_src[_curr-1] != expected) return false;
-            _curr++;
+            if (peek() != expected) return false;
             return true;
         }
 
-        bool isalpha(wchar_t c) const noexcept;
+        bool is_id(wchar_t c) const noexcept {
+            return match(L'с') || match(L'т') || match(L'е') || match(L'п') || match(L'а') || match(L'н') || match(L'о') || match(L'в') 
+                || match(L'С') || match(L'Т') || match(L'Е') || match(L'П') || match(L'А') || match(L'Н') || match(L'О') || match(L'В');
+        }
 
-        bool isdelim(wchar_t c) const noexcept;
-
-        void skip_whitespace() noexcept;
+        void skip_whitespace() noexcept { while (std::iswspace(peek())) advance(); }
     };
 
 }

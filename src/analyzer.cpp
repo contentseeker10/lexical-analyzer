@@ -59,14 +59,22 @@ namespace vs {
         }
 
         // Numbers
-        if (std::isdigit(c)) {
-            while (!is_at_end() && std::isdigit(advance()));
+        if (std::iswdigit(c)) {
+            while (!is_at_end() && std::iswdigit(advance()));
             if (match(L'.')) {
-                if (std::isdigit(advance())) {
-                    while (!is_at_end() && std::isdigit(advance()));
+                advance();
+                if (std::iswdigit(advance())) {
+                    while (!is_at_end() && std::iswdigit(advance()));
                 }
             }
             return { TokenType::Number, wide_to_utf8(_src.substr(_begin, _curr - 1)) };
+        }
+
+        // Identifiers
+        // TODO: is_id() works wrong in cyrillic - why???
+        if (is_id(c)) {
+            while (!is_at_end() && (isalpha(peek()) || std::iswdigit(peek()))) advance();
+            return { TokenType::Identifier, wide_to_utf8(_src.substr(_begin, _curr - 1)) };
         }
 
         return { TokenType::Undefined, "" };
