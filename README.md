@@ -1,42 +1,42 @@
 # lexical-analyzer
 
-Примітивний лексичний аналізатор на основі Детермінованого Скінченого Автомату.
+A primitive lexical analyzer based on a Deterministic Finite Automaton.
 
-## Технічна специфікація
+## Technical Specification
 
-- Програма реалізована на мові C++20 
-- Побудована за допомогою CMake 4.3 
-- В коді використано бібліотеку Windows API
+- Implemented in C++20
+- Built with CMake 4.3
+- Uses the Windows API library
 
-## Структура проєкту
+## Project Structure
 
 ```
 lexical-analyzer/
 ├── bin/
-|   └── LexicalAnalyzer.exe # Скомпільований виконуваний файл програми
+|   └── LexicalAnalyzer.exe # Compiled executable file
 ├── example/ 
-|   ├── example.png         # Скріншот прикладу виконання програми
-|   └── pseudocode.txt      # Приклад псевдокоду для лексичного аналізу
+|   ├── example.png         # Example execution screenshot
+|   └── pseudocode.txt      # Pseudocode example for lexical analysis
 ├── include/
-|   └── analyzer.hpp        # Інтерфейс аналізатора
+|   └── analyzer.hpp        # Analyzer interface
 ├── src/
-|   ├── analyzer.cpp        # Імплементація аналізатора
-|   └── main.cpp            # Точка входу в програму
-└── CMakeLists.txt          # Конфігурація CMake
+|   ├── analyzer.cpp        # Analyzer implementation
+|   └── main.cpp            # Program entry point
+└── CMakeLists.txt          # CMake configuration
 ```
 
-## Можливості розпізнання токенів
+## Token Recognition Capabilities
 
-1. **Identifier** - Ідентифікатори, складені з символів українського алфавіту, взятих з мого прізвища (Степанов), та цифр
-2. **StringLiteral** - Літерал стрічка символів (будь-яких)
-3. **Number** - Цілі та дробні числа
-4. **Operator** - Арифметичні оператори
-5. **Keyword** - Зарезервовані слова (if, else, while...)
-6. **Function** - Стандартна вбудована функція (sin, cos, pow...)
-7. **Undefined** - Неправильно побудований токен
-8. **End** - Кінець тексту
+1. **Identifier** - Identifiers composed of characters from the Ukrainian alphabet (from my surname Stepanov) and digits
+2. **StringLiteral** - String literal containing any characters
+3. **Number** - Integer and floating-point numbers
+4. **Operator** - Arithmetic operators
+5. **Keyword** - Reserved keywords (if, else, while...)
+6. **Function** - Standard built-in functions (sin, cos, pow...)
+7. **Undefined** - Malformed token
+8. **End** - End of text
 
-Програма отримує стрічку тексту з файлу та отримує і виводить кожен токен поки не дійде до кінця:
+The program reads text from a file and retrieves and outputs each token until it reaches the end:
 ```cpp
 vs::Token t;
 while (t.token != vs::TokenType::End) {
@@ -45,26 +45,26 @@ while (t.token != vs::TokenType::End) {
 }
 ```
 
-Всі види лексем окрім Keyword та Function працюють на основі ДСА. Перші ж визначаються за зверненням в `std::map`, заповнену набором ключових слів та стандартних функцій.
+All token types except Keyword and Function are processed using a DFA. The latter are identified by lookup in a `std::map` populated with a set of keywords and standard functions.
 
-Демонстрація роботи програми на прикладі взятого з *example/pseudocode.txt*:
+Program execution demonstration using the example from *example/pseudocode.txt*:
 
 <img src="example/example.png" width="50%" alt="Screenshot of example">
 
-Програма реалізована суто під ОС Windows - використовує відповідний тип `wchar_t` для роботи з кириличними символами та конвертацію стрічок в обидві сторони.
+The program is implemented specifically for Windows OS - it uses the `wchar_t` type to handle Cyrillic characters and performs bidirectional string conversion.
 
-## Компіляція і запуск
+## Compilation and Execution
 
-Для побудови проєкту можна скористатись **CMake 4.3+**:
+To build the project, you can use **CMake 4.3+**:
 
 ```ps1
 cmake -B out -S .
 cmake --build out --config Debug
 ```
 
-Файл з псевдокодом можна покласти в одній зі скомпільованою програмою директорією:
+The pseudocode file can be placed in the same directory as the compiled program:
 
 ```ps1
 cd .\out\Debug\
-.\LexicalAnalyzer.exe <назва файлу для аналізу>
+.\LexicalAnalyzer.exe <filename>
 ```
